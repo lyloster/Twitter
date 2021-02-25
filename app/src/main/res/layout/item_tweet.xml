@@ -20,6 +20,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/ivProfileImage"
+        android:textAlignment="viewStart"
         tools:text="lyloster" />
 
     <TextView
@@ -30,5 +31,19 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@+id/ivProfileImage"
+        android:textAlignment="viewStart"
         tools:text="Hi! This is my first tweet!!" />
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvBody"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        android:textAlignment="viewEnd"
+        android:textSize="14sp"
+        tools:text="7h" />
 </RelativeLayout>
