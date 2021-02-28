@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ToolbarWidgetWrapper;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -10,6 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +23,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.parceler.Parcels;
 
 import java.lang.annotation.Target;
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ import static android.widget.LinearLayout.HORIZONTAL;
 public class TimelineActivity extends AppCompatActivity {
 
     public static final String TAG = "TimelineActivity";
+    public static final int REQUEST_CODE = 20; //random number, needs to be unique
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
@@ -105,10 +109,25 @@ public class TimelineActivity extends AppCompatActivity {
             // Composed icon is tapped
             // Navigate to the compose activity
             Intent composeTweet = new Intent(this, ComposeActivity.class);
-            startActivity(composeTweet);
+            startActivityForResult(composeTweet, REQUEST_CODE);
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_CODE && requestCode == RESULT_OK) {
+            // Get data from the intent (tweet)
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+            // Update the recycler view with the new tweet
+            // Modify data source of the tweets
+            tweets.add(0, tweet);
+            // Update the adapter
+            adapter.notifyItemInserted(0);
+            rvTweets.smoothScrollToPosition(0);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void loadMoreData() {
@@ -129,7 +148,6 @@ public class TimelineActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "onFailure for loadMoreData(): " + response, throwable);
@@ -152,7 +170,6 @@ public class TimelineActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "onFailure" + response, throwable);
